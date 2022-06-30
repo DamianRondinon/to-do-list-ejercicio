@@ -3,12 +3,15 @@ const input = document.getElementById("input");
 const addTaskBtn = document.getElementById("addTask");
 const listTasks = document.getElementById("list-container");
 
+// *Creamos un array vacio en donde vamos a guardar todas las tareas
+let tasks = [];
+
 // *Ahora tenemos que traer lo que escribamos en el input cuando hagamos click al boton
 
-addTaskBtn.addEventListener("click", addTask);
+addTaskBtn.addEventListener("click", addTasks);
 
 // *Funcion para agregar tareas
-function addTask() {
+function addTasks() {
   // console.dir para ver los props a las que podemos acceder
   // console.dir(input.value);
   const task = input.value;
@@ -18,6 +21,36 @@ function addTask() {
     //console.log("error");
     showError("La tarea esta vacia");
   }
+  // Creamos un objeto de tasks donde vamos a guardar dos valores, el task y el id. Para el id vamos a usar Date.now(), que nos muestra esto? Nos muestra todos los milisegundos que pasaron desde el 1 de enero de 1970.
+
+  const taskObj = {
+    task: task,
+    id: Date.now(),
+  };
+
+  // Este objeto vamos a agregarlo a nuestro array de task. lo vamos a hacer con la prop de spread operator(Clona el array y le vamos a concatenar el objeto)
+
+  tasks = [...tasks, taskObj];
+
+  // Ejecutamos una funcion para que nos pinte la tarea
+
+  createHTML();
+}
+
+// *Funcion para pintar las tareas
+function createHTML() {
+  // Con esto arreglamos el duplicado de tareas
+  listTasks.innerHTML = "";
+  tasks.forEach((task) => {
+    // Crear un elemento li para que vaya dentro del ul
+    const li = document.createElement("li");
+
+    // Le pasamos lo que va a tener el li adentro
+    li.innerHTML = `${task.task}<span data-id='${task.id}'>X</span>`;
+
+    // Lo pintamos en el html
+    listTasks.appendChild(li);
+  });
 }
 
 // *Creamos la funcion para mostrar el error
@@ -33,6 +66,8 @@ function showError(error) {
 
   // Tenemos que agregar ese p dentro del ul
   listTasks.appendChild(msgError);
+  // Tenemos un problema, el mensaje de error se queda ahí y no se va, tenemos que hacer que dure 2 o 3 segundos con setTimeOut
+  setTimeout(() => {
+    msgError.remove();
+  }, 2000);
 }
-
-// Tenemos un problema, el mensaje de error se queda ahí y no se va, tenemos que hacer que dure 2 o 3 segundos con setTimeOut
